@@ -10,14 +10,22 @@ public class Player : MonoBehaviour
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Animator animator;
+    private int coin = 0;
     private float horizontalValue;
     private bool isGrounded = false;
     private bool isAttack = false;
+    private bool isDeath = false;
     private string currentAnimName;
     private StatePlayer statePlayer = StatePlayer.None;
-
+    private Vector3 savePoint;
+    private void Start()
+    {
+        savePoint = transform.position;
+        OnInit();
+    }
     private void Update()
     {
+        if (isDeath) return;
         horizontalValue = Input.GetAxis("Horizontal");
         isGrounded = CheckGrounded();
         if (Input.GetButtonDown("Jump"))
@@ -48,7 +56,7 @@ public class Player : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        Debug.Log(statePlayer);
+        if (isDeath) return;
         if (isGrounded)
         {
             switch (statePlayer)
@@ -82,6 +90,17 @@ public class Player : MonoBehaviour
                 statePlayer = StatePlayer.None;
             }
         }
+    }
+    public void OnInit()
+    {
+        isDeath = false;
+        isAttack = false;
+        transform.position = savePoint;
+        ChangeAnim("idle");
+    }
+    internal void SavePoint()
+    {
+        savePoint = transform.position;
     }
     private void Jump()
     {
@@ -123,6 +142,20 @@ public class Player : MonoBehaviour
             animator.ResetTrigger(animName);
             currentAnimName = animName;
             animator.SetTrigger(currentAnimName);
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Coin"))
+        {
+            coin++;
+            Destroy(collision.gameObject);
+        }
+        if (collision.CompareTag("DeathZone"))
+        {
+            isDeath = true;
+            ChangeAnim("die");
+            Invoke(nameof(OnInit), 1f);
         }
     }
 }
