@@ -5,7 +5,6 @@ public class MovingPlatform : MonoBehaviour
     [SerializeField] private Transform aPoint, bPoint;
     [SerializeField] private float speed;
     private Vector3 target;
-    private const string playerTag = "Player";
     // Start is called before the first frame update
     void Start()
     {
@@ -28,14 +27,14 @@ public class MovingPlatform : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag(playerTag))
+        if (collision.gameObject.CompareTag(Constants.PlayerTag))
         {
             collision.transform.SetParent(transform);
         }
     }
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag(playerTag))
+        if (collision.gameObject.CompareTag(Constants.PlayerTag))
         {
             collision.transform.SetParent(null);
         }
