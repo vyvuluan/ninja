@@ -131,7 +131,7 @@ public class Player : Character
     }
     private void Move()
     {
-        if (isGrounded && !isJump)
+        if (isGrounded)
         {
             ChangeAnim(Constants.RunAnim);
         }
